@@ -1,0 +1,26 @@
+name: tese
+
+services:
+  local:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: local
+      args:
+        USERNAME: ${LOCAL_USER:-devuser}
+        USER_UID: ${LOCAL_UID:-1000}
+        USER_GID: ${LOCAL_GID:-1000}
+    image: tese-local:latest
+    init: true
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /workspace
+    restart: unless-stopped
+    environment:
+      HOME: /home/${LOCAL_USER:-devuser}
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      MPLCONFIGDIR: /home/${LOCAL_USER:-devuser}/.cache/matplotlib
+      PYTHONPATH: /workspace/code:/workspace/code/src:/workspace
+    volumes:
+      - .:/workspace
